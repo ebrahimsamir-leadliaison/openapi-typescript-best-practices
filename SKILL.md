@@ -29,6 +29,7 @@ Match the spec's existing format (JSON vs YAML) and conventions. If the project 
 10. **Avoid `additionalProperties: true`** — it generates `[key: string]: any`. For maps, use a typed `additionalProperties: { "type": "string" }`.
 11. **Discriminated unions**: `oneOf` of `$ref`s (each variant is a named schema, not inline) plus `discriminator.propertyName`, where each variant has a single-value enum on the discriminator property. This generates `type PaymentMethod = CreditCardPaymentMethod | BankAccountPaymentMethod`, which narrows in a `switch`.
 12. **Composition with `allOf`** generates an intersection type (`type User = BaseEntity & {...}`), not `interface ... extends`. Don't redefine a base property in the extending part: a conflicting property silently becomes `never` instead of raising an error.
+13. **An empty-body POST/PUT/PATCH still gets a documented `requestBody`** — don't omit it or invent fake fields; use a reusable schema with `maxProperties: 0` and `required: false`.
 
 ### Required/nullable quick map
 
@@ -83,5 +84,6 @@ Check `package.json` for the project's generation scripts (e.g. `pnpm api:core`,
 - [ ] Shared headers in `components/headers`; endpoint-specific headers may be inline
 - [ ] `operationId` on every operation
 - [ ] Response schema defined for every status code that returns a body
+- [ ] Empty-body requests use `maxProperties: 0` + `required: false`, not a missing or fabricated `requestBody`
 - [ ] String enums; no `additionalProperties: true`
 - [ ] Unions use `oneOf` + `discriminator`; pagination uses the `PaginatedXResponse` shape

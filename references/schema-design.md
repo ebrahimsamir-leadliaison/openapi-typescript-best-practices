@@ -160,6 +160,13 @@ Define your data structures and enums once and reference them everywhere:
 ```
 **Problems:** Same request body definition duplicated - changes require updating multiple places.
 
+### Endpoints with no meaningful input still get a documented body
+
+Don't omit `requestBody` just because there's nothing to put in it (e.g. an
+`/auth` endpoint whose credentials travel in headers). Use a shared
+`EmptyRequestBody` schema (`type: object`, `maxProperties: 0`) with
+`requestBody.required: false` instead. See `pitfalls.md` #6 for the full example.
+
 ### Use `components/responses` for Responses
 
 Especially useful for standardizing error responses across all endpoints:

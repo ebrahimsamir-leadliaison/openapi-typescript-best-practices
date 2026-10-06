@@ -142,3 +142,50 @@ export interface User {
 }
 ```
 
+## ❌ 6. Missing or Fabricated Body for No-Input Endpoints
+
+```json
+{
+  "paths": {
+    "/auth": {
+      "post": {
+        "operationId": "authenticate"
+        // ❌ requestBody omitted even though the client sends `{}`
+      }
+    }
+  }
+}
+```
+
+✅ **Model the empty body with a reusable schema:**
+```json
+{
+  "components": {
+    "schemas": {
+      "EmptyRequestBody": {
+        "type": "object",
+        "additionalProperties": false,
+        "maxProperties": 0,
+        "example": {}
+      }
+    }
+  },
+  "paths": {
+    "/auth": {
+      "post": {
+        "operationId": "authenticate",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/EmptyRequestBody" }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+**Why:** documents that a body isn't required but must be empty if sent, instead of silently accepting arbitrary ignored fields.
+
